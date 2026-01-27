@@ -1,0 +1,65 @@
+############################
+# DOTNET / ASP.NET CORE
+############################
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+# Rider / VS Code
+.idea/
+
+# Environment & secrets
+appsettings.Development.json
+appsettings.Production.json
+*.pfx
+*.pem
+
+############################
+# NODE / REACT NATIVE / EXPO
+############################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+.expo/
+.expo-shared/
+web-build/
+
+# Metro / React Native
+.metro-health-check*
+ios/Pods/
+android/build/
+android/.gradle/
+android/app/build/
+
+############################
+# ENV FILES
+############################
+.env
+.env.local
+.env.development
+.env.production
+
+############################
+# OS FILES
+############################
+.DS_Store
+Thumbs.db
+
+############################
+# TEMP / LOGS
+############################
+*.log
+*.tmp
+
+############################
+# JWT / TOKENS (IMPORTANT)
+############################
+*.jwt
