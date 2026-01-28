@@ -1,12 +1,16 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
 import Loader from './Loader';
 import Header from './Header/Header';
+import { useContext } from 'react';
+import LoadingContext from '../_helper/LoadingContext';
 
 const AppLayout = ({ children }) => {
+  const {loading, setLoading} = useContext(LoadingContext);
+
 
   return (
     <View style={styles.container}>
-      <Loader />
+      {loading && <Loader />}
       <Header />
       <ScrollView contentContainerStyle={styles.content}>
         {children}

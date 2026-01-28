@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -36,36 +37,46 @@ const Login = ({ navigation }) => {
   };
 
   async function fetchUserRole() {
-    console.log(role);
-      try {
-          const response = await axios.get(getRole, { withCredentials: true });
-          setRole(response.data.role);
-          console.log(response.data)
-      } catch (error) {
-          console.error('Error fetching user role:', error);
-      }
-    }
+    const token = localStorage.getItem('token');
+
+    const response = await axios.get(getRole, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setRole(response.data.role);
+  }
 
   const handleLogin = async () => {
     if (!validate()) return;
 
     try {
+      
       const res = await axios.post(loginUser,{ Email: email, Password: password, Remember: false }, { withCredentials: true });
-    
-      await fetchUserRole();
+      
       console.log(res.data)
-      await AsyncStorage.setItem('token', res.data.tokenString);
-      await AsyncStorage.setItem('userId', String(res.data.updateResult.id));
-      await AsyncStorage.setItem('name', res.data.updateResult.name);
-      await AsyncStorage.setItem('status', res.data.updateResult.status);
-      await AsyncStorage.setItem("token", res.data.tokenString);
-
+      // if(Platform.OS === 'web'){
+        localStorage.setItem('token', res.data.tokenString);
+        localStorage.setItem('userId', JSON.stringify(res.data.updateResult.id));
+        localStorage.setItem('name', JSON.stringify(res.data.updateResult.name));
+        localStorage.setItem('status', JSON.stringify(res.data.updateResult.status));
+      // }
+      // await AsyncStorage.setItem('token', res.data.tokenString);
+      // await AsyncStorage.setItem('userId', res.data.updateResult.id);
+      // await AsyncStorage.setItem('name', res.data.updateResult.name);
+      // await AsyncStorage.setItem('status', res.data.updateResult.status);
+      
+      console.log(res)
       Alert.alert('Success', 'Logged in successfully');
-
-      // navigate to app stack
-      navigation.replace('App');
+      // console.log(res.data.tokenString)
+      await fetchUserRole();
+      
+      // navigate to dashboard stack
+      // navigation.navigate('App');
     } catch (err) {
-      Alert.alert('Login failed', 'Invalid credentials');
+      console.log(err)
+      Alert.alert('Login failed', 'invalid credentials');
     }
   };
 

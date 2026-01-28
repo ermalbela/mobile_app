@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, Keyboard, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AuthContext from '../../_helper/AuthContext';
-// import ListOfMenu from '../ListOfMenu';
+import ListOfMenu from '../ListOfMenu';
 import axios from 'axios';
 import { getMovies } from '../../Endpoint';
 
@@ -20,7 +20,7 @@ const Header = () => {
   const fetchMovies = async () => {
     try {
       const response = await axios.get(getMovies, {
-        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         withCredentials: true,
       });
       setMovies(response.data);
@@ -47,11 +47,8 @@ const Header = () => {
   return (
     <View style={styles.navbar}>
       <View style={styles.leftHeader}>
-        <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
-          <Text style={styles.brand}>Movie House</Text>
-        </TouchableOpacity>
+        <Text style={styles.brand}>Movie House</Text>
       </View>
-
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -60,24 +57,14 @@ const Header = () => {
           onChangeText={handleSearch}
         />
         {isFocused && searchResult.length > 0 && (
-          <FlatList
-            data={searchResult}
-            keyExtractor={(item) => item.id.toString()}
-            // renderItem={({ item }) => (
-            //   // <ListOfMenu
-            //   //   movie={item}
-            //   //   setSearchValue={setSearchValue}
-            //   //   setIsFocused={setIsFocused}
-            //   // />
-            // )}
+          <ListOfMenu
+            searchResult={searchResult}
+            setSearchValue={setSearchValue}
+            setIsFocused={setIsFocused}
             style={styles.searchDropdown}
           />
         )}
       </View>
-
-      {/* <View style={styles.rightMenu}>
-        <Rightbar />
-      </View> */}
     </View>
   );
 };
@@ -85,6 +72,9 @@ const Header = () => {
 export default Header;
 
 const styles = StyleSheet.create({
+  headerWrapper: {
+    zIndex: 50, // make sure it’s above everything else
+  },
   navbar: {
     flexDirection: 'row',
     alignItems: 'center',

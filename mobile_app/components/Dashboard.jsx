@@ -5,85 +5,98 @@ import MovieCard from './CommonElements/MovieCard';
 import MovieForm from './Forms/MovieForm';
 import axios from 'axios';
 import AuthContext from '../_helper/AuthContext';
-import { getMovies } from '../Endpoint';
+import { getLimitedMovies, getMovies } from '../Endpoint';
+import LoadingContext from '../_helper/LoadingContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Dashboard = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [movies, setMovies] = useState([]);
+  const {loading, setLoading} = useContext(LoadingContext)
   const [createMovie, setCreateMovie] = useState(false);
 
   const { role } = useContext(AuthContext);
 
   // Infinite scroll pagination
+  const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
-  const MOVIES_PER_PAGE = 12;
+  const [hasMore, setHasMore] = useState(true);
 
-  async function fetchData(loadMore = false) {
+  const MOVIES_PER_PAGE = 8;
+
+  
+  const fetchData = async (loadMore = false) => {
     try {
       if (loadMore) setLoadingMore(true);
+      else setLoading(true);
 
-      const response = await axios.get(getMovies, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
-        },
-        withCredentials: true
+      const token = localStorage.getItem("token");
+      const response = await axios.get(getLimitedMovies, {
+        params: { page, limit: MOVIES_PER_PAGE },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
+      console.log(response.data);
       if (loadMore) {
         setMovies(prev => [...prev, ...response.data]);
       } else {
         setMovies(response.data);
-        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching movies:', err);
-      setIsLoading(false);
-      setLoadingMore(false);
-    }
-  }
+      if (response.data.length < MOVIES_PER_PAGE) setHasMore(false);
+
+      } catch (err) {
+        console.error("Error fetching movies:", err);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+  };
+
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(page === 1 ? false : true);
+    setLoading(false);
+  }, [page]);
 
   // Load more when reaching bottom
   const handleLoadMore = () => {
-    if (!loadingMore) {
-      setPage(prev => prev + 1);
-      fetchData(true);
-    }
+    if (!hasMore || loadingMore) return;
+    setPage(prev => prev + 1);
   };
+
 
   const handleMoviePress = (movie) => {
     navigation.navigate('MovieDetails', { movieId: movie.id });
   };
 
-  if (isLoading) return <Loader isLoading={isLoading} />;
-
-  return (
+  return loading ? <Loader /> : (
     <View style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
+      <View style={styles.flexRow}>
+        <Text style={styles.title}>Dashboard</Text>
 
-      {role === 'Superadmin' && (
-        <View style={styles.addButtonContainer}>
-          <Button title="Add Movie" onPress={() => setCreateMovie(true)} />
-        </View>
-      )}
-
-      <FlatList
-        data={movies}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2} // 2 cards per row
-        columnWrapperStyle={styles.row}
-        renderItem={({ item }) => (
-          <MovieCard props={item} onPress={() => handleMoviePress(item)} />
+        {role === 'Superadmin' && (
+          <View style={styles.addButtonContainer}>
+            <Button title="Add Movie" onPress={() => setCreateMovie(true)} />
+          </View>
         )}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={() => loadingMore ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-      />
+      </View>
+      
+      <View style={{height: '80vh'}}>
+        <FlatList
+          data={movies}
+          keyExtractor={(item, idx) => idx.toString()}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          renderItem={({ item }) => (
+            <MovieCard props={item} onPress={() => handleMoviePress(item)} />
+          )}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          scrollEventThrottle={17}
+          ListFooterComponent={
+            loadingMore ? <ActivityIndicator size="large" /> : null
+          }
+        />
+      </View>
 
       {/* Modal for creating movie */}
       <Modal visible={createMovie} animationType="slide">
@@ -114,4 +127,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 12,
   },
+  flexRow: {
+    justifyContent: 'space-between',
+    display: 'flex',
+    flexDirection: 'row',
+    margin: '10px',
+    marginBottom: '20px'
+  }
 });

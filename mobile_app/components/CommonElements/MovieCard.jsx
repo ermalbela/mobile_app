@@ -35,8 +35,8 @@ export default MovieCard;
 
 const styles = StyleSheet.create({
   cardWrapper: {
-    width: 160,
-    height: 250,
+    width: 130,
+    height: 230,
     margin: 8,
     borderRadius: 10,
     overflow: 'hidden',

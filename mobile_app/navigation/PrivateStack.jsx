@@ -13,7 +13,7 @@ const withLayout = (Component) => (props) => (
 
 const PrivateStack = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {routes.map(({ name, component }, i) => (
         <Stack.Screen
           key={i}

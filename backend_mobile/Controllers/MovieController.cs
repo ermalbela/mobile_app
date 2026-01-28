@@ -45,6 +45,26 @@ public class MovieController : ControllerBase
         return Ok(movies);
     }
 
+    [HttpGet("get_limited")]
+    public async Task<ActionResult<List<Movie>>> GetLimited([FromQuery]int page = 1, [FromQuery]int limit = 8)
+    { 
+        int skip = (page - 1) * limit;
+
+        var movies = await _movies
+            .Find(_ => true)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync();
+
+        foreach (var movie in movies)
+        {
+            movie.Poster = $"http://localhost:5064/Images/{movie.ImageName}";
+            movie.Video = $"http://localhost:5064/Videos/{movie.VideoName}";
+        }
+
+        return Ok(movies);
+    }
+
     [HttpGet("filter_movies")]
     public async Task<ActionResult<List<Movie>>> GetMoviesByGenre([FromQuery] string genre)
     {
@@ -61,8 +81,8 @@ public class MovieController : ControllerBase
 
         foreach (var movie in movies)
         {
-            movie.Poster = $"http://localhost:5064/Images/{movie.ImageName}";
-            movie.Video = $"http://localhost:5064/Videos/{movie.VideoName}";
+            movie.Poster = String.Format("http://localhost:5064/Images/{0}", movie.ImageName);
+            movie.Video = String.Format("http://localhost:5064/Videos/{0}", movie.VideoName);
         }
 
         return Ok(movies);

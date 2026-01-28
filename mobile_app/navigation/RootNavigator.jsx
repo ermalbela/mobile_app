@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import AuthStack from '../navigation/AuthStack';
 import PrivateStack from '../navigation/PrivateStack';
 import AuthContext from '../_helper/AuthContext';
@@ -20,7 +20,9 @@ const RootNavigator = () => {
   async function fetchUserRole() {
     setLoading(true)
     console.log(role);
-    const response = await axios.get(getRole, { withCredentials: true })
+    const response = await axios.get(getRole, { withCredentials: true, headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    } })
     .catch(err => {
       localStorage.removeItem('token');
       localStorage.removeItem('name');

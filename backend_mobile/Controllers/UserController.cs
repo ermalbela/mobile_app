@@ -52,7 +52,7 @@ namespace backend_mobile.Controllers
                     Name = user.Name,
                     Email = user.Email,
                     UserName = user.UserName,
-                    Role = "User",
+                    Role = "Superadmin",
                     Status = user.Status
                 };
 
@@ -219,42 +219,17 @@ namespace backend_mobile.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("user-role")]
-        public ActionResult GetUserRole()
+        public IActionResult GetUserRole()
         {
-            var token = Request.Cookies["token"];
-            if (string.IsNullOrEmpty(token))
-            {
+            var role = User.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+            if (role == null)
                 return Unauthorized();
-            }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-
-            try
-            {
-                var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidIssuer = _config["Jwt:Issuer"],
-                    ValidAudience = _config["Jwt:Audience"],
-                    IssuerSigningKey = securityKey
-                }, out var validatedToken);
-
-                var roleClaim = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role);
-
-                if (roleClaim == null)
-                {
-                    return Unauthorized();
-                }
-
-                return Ok(new { role = roleClaim.Value });
-            }
-            catch (Exception)
-            {
-                return Unauthorized();
-            }
+            return Ok(new { role });
         }
 
         [HttpPost("toggle_favorite")]

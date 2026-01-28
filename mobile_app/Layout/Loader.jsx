@@ -3,15 +3,13 @@ import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const Loader = ({ isLoading = true }) => {
+const Loader = () => {
   const scale1 = useRef(new Animated.Value(0)).current;
   const scale2 = useRef(new Animated.Value(0)).current;
   const opacity1 = useRef(new Animated.Value(0)).current;
   const opacity2 = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (!isLoading) return;
-
     const createAnimation = (scale, opacity, delay = 0) =>
       Animated.loop(
         Animated.sequence([
@@ -53,9 +51,8 @@ const Loader = ({ isLoading = true }) => {
       anim1.stop();
       anim2.stop();
     };
-  }, [isLoading]);
+  }, []);
 
-  if (!isLoading) return null;
 
   return (
     <View style={styles.overlay}>

@@ -23,7 +23,7 @@ namespace backend_mobile
                     policy =>
                     {
                         // You can put your mobile app URL or '*' for all (not recommended for production)
-                        policy.WithOrigins("http://localhost:8081", "http://192.168.0.26:8081") // or your expo/metro URL
+                        policy.WithOrigins("http://192.168.0.26:8081", "http://localhost:8081") // or your expo/metro URL
                               .AllowAnyHeader()
                               .AllowAnyMethod()
                               .AllowCredentials();

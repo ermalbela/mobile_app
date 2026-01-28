@@ -9,6 +9,7 @@ export const getAllFavorites = userApi + 'get_all_favorites/';
 
 const movieApi = 'http://localhost:5064/api/movies/';
 export const getMovies = movieApi + 'get_movies';
+export const getLimitedMovies = movieApi + 'get_limited';
 export const selectMovie = movieApi + 'get_movie';
 export const addMovie = movieApi + 'create_movie';
 export const getFilteredMovies = movieApi + 'filter_movies?';
