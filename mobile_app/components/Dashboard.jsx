@@ -65,7 +65,8 @@ const Dashboard = ({ navigation }) => {
 
 
   const handleMoviePress = (movie) => {
-    navigation.navigate('MovieDetails', { movieId: movie.id });
+    console.log(movie);
+    navigation.navigate('MovieWatcher', { id: movie.id });
   };
 
   return loading ? <Loader /> : (

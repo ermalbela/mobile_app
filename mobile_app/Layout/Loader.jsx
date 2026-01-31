@@ -18,25 +18,25 @@ const Loader = () => {
             Animated.timing(scale, {
               toValue: 1,
               duration: 2000,
-              useNativeDriver: true,
+              useNativeDriver: false,
             }),
             Animated.timing(opacity, {
               toValue: 1,
               duration: 1000,
-              useNativeDriver: true,
+              useNativeDriver: false,
             }),
           ]),
           Animated.parallel([
             Animated.timing(opacity, {
               toValue: 0,
               duration: 1000,
-              useNativeDriver: true,
+              useNativeDriver: false,
             }),
           ]),
           Animated.timing(scale, {
             toValue: 0,
             duration: 0,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }),
         ])
       );

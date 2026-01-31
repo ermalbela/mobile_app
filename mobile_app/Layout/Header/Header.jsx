@@ -56,13 +56,24 @@ const Header = () => {
           value={searchValue}
           onChangeText={handleSearch}
         />
-        {isFocused && searchResult.length > 0 && (
-          <ListOfMenu
-            searchResult={searchResult}
-            setSearchValue={setSearchValue}
-            setIsFocused={setIsFocused}
-            style={styles.searchDropdown}
-          />
+        {isFocused && (
+          <>
+            <Pressable
+              onPress={() => {
+                setIsFocused(false);
+                Keyboard.dismiss();
+              }}
+              style={styles.overlay}
+            />
+              <View style={styles.dropdownWrapper}>
+                <ListOfMenu
+                  searchResult={searchResult}
+                  setSearchValue={setSearchValue}
+                  setIsFocused={setIsFocused}
+                  style={styles.searchDropdown}
+                />
+              </View>
+          </>
         )}
       </View>
     </View>
@@ -94,14 +105,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#f5f5f5',
   },
-  searchDropdown: {
-    position: 'absolute',
-    top: 45,
+  overlay: {
+    position: 'fixed',
+    top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
-    maxHeight: 200,
+    bottom: 0,
+    backgroundColor: 'transparent',
+    zIndex: 10,
+  },
+  dropdownWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     zIndex: 20,
   },
-//   rightMenu: { flexDirection: 'row', alignItems: 'center' },
+  searchDropdown: {
+    backgroundColor: '#fff',
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+  }
 });

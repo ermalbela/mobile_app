@@ -20,6 +20,7 @@ const commentApi = 'http://localhost:5064/api/comments/';
 export const addComment = commentApi + 'add_comment';
 export const getComments = commentApi + 'get_comments/';
 export const deleteComment = commentApi + 'delete_comment/';
+export const getLimitedComments = commentApi + 'get_limited_comments/';
 
 const profileApi = 'http://localhost:5064/api/profile/';
 export const getProfile = profileApi;

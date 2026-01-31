@@ -2,29 +2,31 @@ import React from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const ListOfMenu = ({ searchResult, setSearchValue, setSearchToggle, style }) => {
+const ListOfMenu = ({ searchResult, setSearchValue, setIsFocused, style }) => {
   const navigation = useNavigation();
+  const cleanResults = searchResult.filter(Boolean);
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => {
         setSearchValue('');
-        setSearchToggle(false);
+        setIsFocused(false);
         navigation.navigate('MovieDetails', { movieId: item.id });
       }}
     >
-      <Image source={{ uri: item.poster }} style={styles.image} />
+      <Image source={{ uri: item.poster }} style={styles.image} resizeMode="cover" />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.genres}>[{item.genres.join(', ')}]</Text>
       </View>
     </TouchableOpacity>
-  );
+    )
 
   return (
     <FlatList
-      data={searchResult}
+      data={cleanResults}
       keyExtractor={(item, idx) => idx.toString()}
       renderItem={renderItem}
       keyboardShouldPersistTaps="handled"
@@ -40,11 +42,11 @@ export default ListOfMenu;
 
 const styles = StyleSheet.create({
   listContainer: {
-    position: 'absolute',  // float over header
-    top: 45,               // below the input
+    position: 'absolute', 
+    top: 45,         
     left: 0,
     right: 0,
-    maxHeight: 200,        // limit height
+    maxHeight: 200,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ddd',
@@ -63,7 +65,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 70,
     marginRight: 10,
-    resizeMode: 'cover',
     borderRadius: 4,
   },
   textContainer: {
@@ -82,14 +83,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 20,
     color: '#999',
-  },
-  searchDropdown: {
-    maxHeight: 200,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    zIndex: 20,
   }
-
 });

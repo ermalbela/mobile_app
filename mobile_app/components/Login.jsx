@@ -71,9 +71,7 @@ const Login = ({ navigation }) => {
       Alert.alert('Success', 'Logged in successfully');
       // console.log(res.data.tokenString)
       await fetchUserRole();
-      
-      // navigate to dashboard stack
-      // navigation.navigate('App');
+
     } catch (err) {
       console.log(err)
       Alert.alert('Login failed', 'invalid credentials');
