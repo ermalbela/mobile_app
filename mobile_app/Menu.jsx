@@ -1,4 +1,4 @@
-import { Home, Star, CheckSquare, Grid, Zap, Users, Smile, Eye, AlertTriangle, Heart, Cpu, Moon, BookOpen, Airplay, User } from "react-native-vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 export const MENUITEMS = [
   {
@@ -7,22 +7,22 @@ export const MENUITEMS = [
     Items: [
       {
         title: "Dashboard",
-        icon: Home,
+        icon: (props) => <Ionicons name="home-outline" {...props} />,
         type: "link",
-        path: `/`,
+        path: `Dashboard`,
       },
       {
-        title: "Favorite Movies",
-        icon: Star,
+        title: "Favorites",
+        icon: (props) => <Ionicons name="star-outline" {...props} />,
         type: "link",
-        path: `/favorites`,
+        path: `Favorites`,
       },
-      {
-        title: "Watch Later",
-        icon: CheckSquare,
-        type: "link",
-        path: `/watch_later`,
-      },
+      // {
+      //   title: "Watch Later",
+      //   icon: CheckSquare,
+      //   type: "link",
+      //   path: `/watch_later`,
+      // },
       // {
       //   title: "Account Settings",
       //   icon: Star,
@@ -30,34 +30,82 @@ export const MENUITEMS = [
       //   path: `/account`,
       // },
       {
-        title: "Admin Dashboard",
-        icon: User,
+        title: "Admin",
+        icon: (props) => <Ionicons name="person-outline" {...props} />,
         type: "link",
-        path: `/admin_dashboard`,
-        roles: ["Admin", "Superadmin"] // only show if the user is admin or superadmin
+        path: `Admin_dashboard`,
+        roles: ["Admin", "Superadmin"], // only show if the user is admin or superadmin
       },
       {
         title: "Genres",
-        icon: Grid,
+        icon: (props) => <Ionicons name="grid-outline" {...props} />,
         type: "sub",
         children: [
-          { path: `/filter_movies?genre=action`, title: "Action", type: "link", icon: Zap },
-          { path: `/filter_movies?genre=comedy`, title: "Comedy", type: "link", icon: Smile },
-          { path: `/filter_movies?genre=drama`, title: "Drama", type: "link", icon: Users},
-          { path: `/filter_movies?genre=horror`, title: "Horror", type: "link", icon: AlertTriangle },
-          { path: `/filter_movies?genre=romance`, title: "Romance", type: "link", icon: Heart },
-          { path: `/filter_movies?genre=sci-Fi`, title: "Sci-Fi", type: "link", icon: Cpu },
-          { path: `/filter_movies?genre=fantasy`, title: "Fantasy", type: "link", icon: Moon },
-          { path: `/filter_movies?genre=documentary`, title: "Documentary", type: "link", icon: BookOpen },
-          { path: `/filter_movies?genre=animation`, title: "Animation", type: "link", icon: Airplay },
-          { path: `/filter_movies?genre=thriller`, title: "Thriller", type: "link", icon: Eye }
+          {
+            path: `/filter_movies?genre=action`,
+            title: "Action",
+            type: "link",
+            icon: (props) => <Ionicons name="flash-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=comedy`,
+            title: "Comedy",
+            type: "link",
+            icon: (props) => <Ionicons name="happy-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=drama`,
+            title: "Drama",
+            type: "link",
+            icon: (props) => <Ionicons name="people-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=horror`,
+            title: "Horror",
+            type: "link",
+            icon: (props) => <Ionicons name="warning-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=romance`,
+            title: "Romance",
+            type: "link",
+            icon: (props) => <Ionicons name="heart-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=sci-Fi`,
+            title: "Sci-Fi",
+            type: "link",
+            icon: (props) => <Ionicons name="hardware-chip-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=fantasy`,
+            title: "Fantasy",
+            type: "link",
+            icon: (props) => <Ionicons name="moon-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=documentary`,
+            title: "Documentary",
+            type: "link",
+            icon: (props) => <Ionicons name="book-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=animation`,
+            title: "Animation",
+            type: "link",
+            icon: (props) => <Ionicons name="tv-outline" {...props} />,
+          },
+          {
+            path: `/filter_movies?genre=thriller`,
+            title: "Thriller",
+            type: "link",
+            icon: (props) => <Ionicons name="eye-outline" {...props} />,
+          },
         ],
       },
     ],
   },
 ];
-
-
 
 export const actors = [
   { value: "Leonardo DiCaprio", label: "Leonardo DiCaprio" },

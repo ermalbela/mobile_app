@@ -14,7 +14,7 @@ const CommonModal = ({
   defaultButtons
 }) => {
   return (
-    <Modal isVisible={visible} backdropOpacity={0.4}>
+    <Modal isVisible={visible} backdropOpacity={0.4} transparent>
       <View style={styles.modal}>
         <Text style={styles.msgtext}>{message}</Text>
         {FormComponent && (

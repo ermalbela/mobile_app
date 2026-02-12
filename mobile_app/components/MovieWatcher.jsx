@@ -63,6 +63,7 @@ const MovieWatcher = () => {
         },
       });
       setMovie(response.data);
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -152,7 +153,7 @@ const MovieWatcher = () => {
     } finally {
       setModalVisible(false);
       setSelectedCommentId(null);
-      window.alert('Success, Rating added.');
+      window.alert('Success, comment deleted.');
     }
   };
 
@@ -180,12 +181,11 @@ const MovieWatcher = () => {
 
   useEffect(() => {
     fetchFavorites();
-    // fetchComments();
     setComments([]);
     setCurrentPage(1);
     getMovie();
     setLoading(false);
-  }, [id]);
+  }, [id, movie]);
 
   useEffect(() => {
     fetchLimitedComments();
@@ -377,7 +377,7 @@ const MovieWatcher = () => {
         onCancel={() => setAddRate(false)}
         defaultButtons={false}
         FormComponent={RateForm}
-        formProps={{movieId: id, setAddRate, getMovie}}
+        formProps={{movieId: id, setAddRate}}
       />
     </ScrollView>
   );

@@ -3,6 +3,7 @@ import Loader from './Loader';
 import Header from './Header/Header';
 import { useContext } from 'react';
 import LoadingContext from '../_helper/LoadingContext';
+import Footer from './Footer/Footer';
 
 const AppLayout = ({ children }) => {
   const {loading, setLoading} = useContext(LoadingContext);
@@ -13,15 +14,25 @@ const AppLayout = ({ children }) => {
       {loading && <Loader />}
       <Header />
       <ScrollView contentContainerStyle={styles.content}>
-        {children}
+        <View style={styles.card}>
+          {children}
+        </View>
       </ScrollView>
+      <Footer />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flexGrow: 1, padding: 16 }
+  container: { flex: 1, backgroundColor: "#f2f2f2"},
+  content: { flexGrow: 1 },
+  card: {
+    flex: 1,
+    backgroundColor: 'white',
+    height: '100%',
+    margin: 16,
+    overflow: "hidden"
+  },
 });
 
 export default AppLayout;

@@ -13,7 +13,7 @@ const ListOfMenu = ({ searchResult, setSearchValue, setIsFocused, style }) => {
       onPress={() => {
         setSearchValue('');
         setIsFocused(false);
-        navigation.navigate('MovieDetails', { movieId: item.id });
+        navigation.navigate('MovieWatcher', { id: item.id });
       }}
     >
       <Image source={{ uri: item.poster }} style={styles.image} resizeMode="cover" />
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
-    zIndex: 20,
+    zIndex: 50,
   },
   itemContainer: {
     flexDirection: 'row',

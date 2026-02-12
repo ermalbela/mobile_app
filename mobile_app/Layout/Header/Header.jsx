@@ -5,6 +5,8 @@ import AuthContext from '../../_helper/AuthContext';
 import ListOfMenu from '../ListOfMenu';
 import axios from 'axios';
 import { getMovies } from '../../Endpoint';
+import { Ionicons } from '@expo/vector-icons';
+import { MENUITEMS } from '../../Menu';
 
 const Header = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -12,6 +14,7 @@ const Header = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [movies, setMovies] = useState([]);
   const navigation = useNavigation();
+  const [showGenres, setShowGenres] = useState(false);
 
   useEffect(() => {
     fetchMovies();
@@ -76,6 +79,43 @@ const Header = () => {
           </>
         )}
       </View>
+      <Pressable
+        style={styles.genreButton}
+        onPress={() => setShowGenres(!showGenres)}
+      >
+        <Ionicons name="grid-outline" size={24} color="#333" />
+      </Pressable>
+
+      {showGenres && (
+        <View style={styles.genreDropdown}>
+          {MENUITEMS.map(item => (
+            item.Items.map((menuItem, idx) => {
+              return(
+                <View style={styles.genreDropdownContainer}>
+              {menuItem.type === 'sub' && menuItem.children &&
+                menuItem.children.map((genre, cIdx) => {
+                  console.log(genre);
+                  return(
+                    <Pressable
+                      key={cIdx}
+                      style={styles.genreItem}
+                      onPress={() => {
+                        setShowGenres(false);
+                        navigation.navigate("FilteredMovies", { genre: genre.path });
+                      }}
+                    >
+                      {genre.icon({ size: 20, color: "#333", style: { marginRight: 8 } })}
+                      <Text style={styles.genreText}>{genre.title}</Text>
+                    </Pressable>
+                  )
+                })
+              }
+              </View>
+              )
+            })
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -84,7 +124,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   headerWrapper: {
-    zIndex: 50, // make sure it’s above everything else
+    zIndex: 50,
   },
   navbar: {
     flexDirection: 'row',
@@ -127,5 +167,38 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
-  }
+  },
+  genreButton: {
+    padding: 6,
+    marginLeft: 6,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 6,
+  },
+  genreDropdown: {
+    position: "absolute",
+    top: 50,
+    right: 0,
+    width: 180,
+    maxHeight: 200,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    zIndex: 50,
+  },
+  genreDropdownContainer: {
+    maxHeight: 200,
+    overflowX: 'scroll'
+  },
+  genreItem: {
+    padding: 1,
+    display: 'flex',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  genreText: {
+    fontSize: 16,
+    color: "#000",
+  },
 });

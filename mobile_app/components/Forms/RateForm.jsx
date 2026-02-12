@@ -11,7 +11,7 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { rateMovie } from '../../Endpoint';
 
-const RateForm = ({ setAddRate, getMovie, movieId }) => {
+const RateForm = ({ setAddRate, movieId }) => {
   const [rate, setRate] = useState(0);
   const [error, setError] = useState('');
 

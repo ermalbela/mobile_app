@@ -5,23 +5,25 @@ import AppLayout from '../Layout/AppLayout';
 
 const Stack = createNativeStackNavigator();
 
-const withLayout = (Component) => (props) => (
-  <AppLayout>
-    <Component {...props} />
-  </AppLayout>
-);
+// const withLayout = (Component) => (props) => (
+//   <AppLayout>
+//     <Component {...props} />
+//   </AppLayout>
+// );
 
 const PrivateStack = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {routes.map(({ name, component }, i) => (
-        <Stack.Screen
-          key={i}
-          name={name}
-          component={withLayout(component)}
-        />
-      ))}
-    </Stack.Navigator>
+    <AppLayout>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {routes.map(({ name, component }, i) => (
+          <Stack.Screen
+            key={i}
+            name={name}
+            component={component}
+          />
+        ))}
+      </Stack.Navigator>
+    </AppLayout>
   );
 }
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, FlatList, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Button, FlatList, TouchableOpacity, Modal, ActivityIndicator, TextInput } from 'react-native';
 import Loader from '../Layout/Loader';
 import MovieCard from './CommonElements/MovieCard';
 import MovieForm from './Forms/MovieForm';
@@ -7,7 +7,6 @@ import axios from 'axios';
 import AuthContext from '../_helper/AuthContext';
 import { getLimitedMovies, getMovies } from '../Endpoint';
 import LoadingContext from '../_helper/LoadingContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Dashboard = ({ navigation }) => {
   const {loading, setLoading} = useContext(LoadingContext)
@@ -81,7 +80,7 @@ const Dashboard = ({ navigation }) => {
         )}
       </View>
       
-      <View style={{height: '80vh'}}>
+      <View style={{height: '71vh'}}>
         <FlatList
           data={movies}
           keyExtractor={(item, idx) => idx.toString()}
