@@ -5,7 +5,7 @@ const MovieCard = ({ props, onPress }) => {
   const posterUri = props.poster ?? 'https://via.placeholder.com/150'; // fallback image
 
   return (
-    <TouchableOpacity style={styles.cardWrapper} onPress={onPress}>
+    <TouchableOpacity style={[styles.cardWrapper, props.style]} onPress={onPress}>
       <ImageBackground
         source={{ uri: posterUri }}
         style={styles.poster}

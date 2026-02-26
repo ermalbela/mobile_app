@@ -51,7 +51,7 @@ const CommentForm = ({ movieId, setAddComment, fetchComments }) => {
       setComment("");
       setAddComment(false);
       fetchComments();
-      window.alert('Success, Rating added.');
+      window.alert('Success, Comment added.');
 
     } catch (err) {
       console.log(err);

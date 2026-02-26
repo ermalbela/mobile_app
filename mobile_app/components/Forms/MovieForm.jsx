@@ -10,10 +10,15 @@ import {
 
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
+import { components } from 'react-select';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { Button } from 'react-native-paper';
 
 import { actors, directors, genres, languages } from '../../Menu';
+import { addMovie } from '../../Endpoint';
+import MySelect from '../CommonElements/MySelect';
+
 
 const MovieForm = ({ setCreateMovie, setMovies }) => {
   const [movie, setMovie] = useState({
@@ -29,6 +34,81 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
   });
 
   const [showDate, setShowDate] = useState(false);
+  const [releaseDateText, setReleaseDateText] = useState('Select Release Date');
+  const [imageText, setImageText] = useState("Select Movie Poster");
+  const [videoText, setVideoText] = useState("Select Movie Video");
+
+  const Option = props => {
+    return (
+      <div>
+        <components.Option {...props}>
+          <input
+            type="checkbox"
+            checked={props.isSelected}
+            onChange={() => null}
+          />{" "}
+          <label>{props.label}</label>
+        </components.Option>
+      </div>
+    );
+  };
+
+  const MultiValue = props => (
+    <components.MultiValue {...props}>
+      <p>{props.data.label}</p>
+    </components.MultiValue>
+  );
+
+  const customStyles = { // Customizing react-select styles 
+    container: (provided) => ({
+      ...provided,
+      borderColor: 'rgb(164, 206, 212);',
+      borderRadius: '4px',
+      borderStyle: 'solid',
+      borderWidth: '1px'
+    }),
+    control: (provided) => ({
+      ...provided,
+      width: '100%',
+      overflowX: 'auto',
+      whiteSpace: 'nowrap',
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      display: 'flex',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      whiteSpace: 'nowrap',
+      msOverflowStyle: 'auto',
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      marginRight: '4px',
+      maxHeight: '30px',
+      margin: 0,
+      minWidth: 'unset',
+      height: '25px',
+      padding: 0,
+      alignItems: 'center'
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      height: '100%'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: '8px',
+      overflow: 'hidden'
+    }),
+    option: (styles, {isFocused, isSelected}) => {
+      return{
+        ...styles,
+        backgroundColor: isSelected ? '#6ea4c2' : isFocused ? '#cee6e2' : '#fff',
+        color: !isSelected ? '#000' : isSelected || isFocused ? '#000' : '',
+        borderRadius: '5px'
+      }
+    }
+  }
 
   const pickImage = async () => {
     const res = await ImagePicker.launchImageLibraryAsync({
@@ -37,7 +117,8 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
     });
 
     if (!res.canceled) {
-      setMovie({ ...movie, imageFile: res.assets[0] });
+      setMovie({ ...movie, imageFile: res.assets[0].file, imageName: res.assets[0].name});
+      setImageText(res.assets[0].name);
     }
   };
 
@@ -47,43 +128,53 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
     });
 
     if (res.assets?.length) {
-      setMovie({ ...movie, videoFile: res.assets[0] });
+      setMovie({ ...movie, videoFile: res.assets[0].file, videoName: res.assets[0].name});
+      setVideoText(res.assets[0].name);
     }
   };
 
   const submitMovie = async () => {
     if (!movie.title || !movie.plot || !movie.imageFile || !movie.videoFile) {
-      Alert.alert('Error', 'Please fill all required fields');
+      window.alert('Error', 'Please fill all required fields');
       return;
     }
 
     const formData = new FormData();
     formData.append('title', movie.title);
     formData.append('plot', movie.plot);
-    formData.append('Released', movie.released?.toISOString());
+    // formData.append('Released', movie.released?.toISOString());
+    formData.append('Released', '04/02/2024');
+    formData.append('poster', 'http://localhost:5064/' + movie.imageName)
+    formData.append('video', 'http://localhost:5064/' + movie.videoName)
 
-    movie.genres.forEach(g => formData.append('genres', g));
-    movie.actors.forEach(a => formData.append('actors', a));
-    movie.directors.forEach(d => formData.append('directors', d));
-    movie.languages.forEach(l => formData.append('languages', l));
 
-    formData.append('ImageFile', {
-      uri: movie.imageFile.uri,
-      name: movie.imageFile.fileName || 'poster.jpg',
-      type: 'image/jpeg',
-    });
+    movie.genres.forEach(g => formData.append("genres", g.value));
+    movie.actors.forEach(a => formData.append("actors", a.value));
+    movie.directors.forEach(d => formData.append("directors", d.value));
+    movie.languages.forEach(l => formData.append("languages", l.value));
+    formData.append('ImageFile', movie.imageFile);
+    formData.append('ImageName', movie.imageName);
+    formData.append('VideoFile', movie.videoFile);
+    formData.append('VideoName', movie.videoName);
+  
 
-    formData.append('VideoFile', {
-      uri: movie.videoFile.uri,
-      name: movie.videoFile.name || 'video.mp4',
-      type: 'video/mp4',
-    });
+    // formData.append('ImageFile', {
+    //   uri: movie.imageFile.uri,
+    //   name: movie.imageFile.fileName || 'poster.jpg',
+    //   type: 'image/jpeg',
+    // });
+
+    // formData.append('VideoFile', {
+    //   uri: movie.videoFile.uri,
+    //   name: movie.videoFile.name || 'video.mp4',
+    //   type: 'video/mp4',
+    // });
 
     try {
-      await axios.post('ADD_MOVIE_URL', formData, {
+      await axios.post(addMovie, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: 'Bearer TOKEN',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
@@ -91,7 +182,7 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
       setCreateMovie(false);
     } catch (err) {
       Alert.alert('Error', 'Upload failed');
-      console.log(err);
+      console.log(err.response);
     }
   };
 
@@ -115,26 +206,82 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
       />
 
       <Pressable onPress={() => setShowDate(true)} style={styles.button}>
-        <Text>Select Release Date</Text>
+        <Text>{releaseDateText}</Text>
       </Pressable>
 
-      {showDate && (
-        <DateTimePicker
-          value={movie.released || new Date()}
-          mode="date"
-          onChange={(_, date) => {
-            setShowDate(false);
-            setMovie({ ...movie, released: date });
-          }}
-        />
-      )}
+      <DatePickerModal
+        locale="en"
+        mode="single"
+        visible={showDate}
+        onDismiss={() => setShowDate(false)}
+        date={movie.released}
+        onConfirm={(params) => {
+          setShowDate(false);
+          setMovie({...movie, released: params.date});
+          setReleaseDateText(params.date.toDateString());
+        }}
+      />
+
+      <MySelect
+        options={actors}
+        styles={customStyles}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        components={{ Option, MultiValue }}
+        onChange={(selected) => {
+          setMovie({...movie, actors: selected});
+        }}
+        value={movie.actors}
+        className="react-select-container fullWidth"
+        classNamePrefix="react-select"
+        maxMenuHeight={"160px"}
+        placeholder="Actors"
+        isClearable
+      />
+
+      <MySelect
+        options={genres}
+        styles={customStyles}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        components={{ Option, MultiValue }}
+        onChange={(selected) => {
+          setMovie({...movie, genres: selected});
+        }}
+        value={movie.genres}
+        className="react-select-container fullWidth"
+        classNamePrefix="react-select"
+        maxMenuHeight={"160px"}
+        placeholder="Genres"
+        isClearable
+      />
+
+      <MySelect
+        options={languages}
+        styles={customStyles}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        components={{ Option, MultiValue }}
+        onChange={(selected) => {
+          setMovie({...movie, languages: selected});
+        }}
+        value={movie.languages}
+        className="react-select-container"
+        classNamePrefix="react-select"
+        maxMenuHeight={"160px"}
+        placeholder="Languages"
+        isClearable
+      />
 
       <Pressable onPress={pickImage} style={styles.button}>
-        <Text>Select Poster Image</Text>
+        <Text>{imageText}</Text>
       </Pressable>
 
       <Pressable onPress={pickVideo} style={styles.button}>
-        <Text>Select Movie Video</Text>
+        <Text>{videoText}</Text>
       </Pressable>
 
       <View style={styles.actions}>
@@ -160,6 +307,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
     marginBottom: 10,
+    width: '100%',
   },
   textArea: {
     height: 80,

@@ -72,22 +72,10 @@ export const MENUITEMS = [
             icon: (props) => <Ionicons name="heart-outline" {...props} />,
           },
           {
-            path: `/filter_movies?genre=sci-Fi`,
-            title: "Sci-Fi",
-            type: "link",
-            icon: (props) => <Ionicons name="hardware-chip-outline" {...props} />,
-          },
-          {
             path: `/filter_movies?genre=fantasy`,
             title: "Fantasy",
             type: "link",
             icon: (props) => <Ionicons name="moon-outline" {...props} />,
-          },
-          {
-            path: `/filter_movies?genre=documentary`,
-            title: "Documentary",
-            type: "link",
-            icon: (props) => <Ionicons name="book-outline" {...props} />,
           },
           {
             path: `/filter_movies?genre=animation`,

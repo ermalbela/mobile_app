@@ -1,17 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, FlatList } from 'react-native';
-import Loader from '../Layout/Loader';
-import MovieCard from './CommonElements/MovieCard';
-import MovieForm from './Forms/MovieForm';
-import axios from 'axios';
-import AuthContext from '../_helper/AuthContext';
-import { getAllFavorites } from '../Endpoint';
-import LoadingContext from '../_helper/LoadingContext';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
+import { getFilteredMovies } from "../Endpoint";
+import { StyleSheet } from "react-native";
+import Loader from "../Layout/Loader";
+import { View, FlatList, Text } from "react-native-web";
+import MovieCard from "./CommonElements/MovieCard";
 import { Dimensions } from "react-native";
 
-const Favorites = ({ navigation }) => {
-  const {loading, setLoading} = useContext(LoadingContext)
+const FilteredMovies = () => {
+  const route = useRoute();
+  const raw = route.params.genre;
+  const genre = raw?.split("genre=")[1];
 
+  const [isLoading, setIsLoading] = useState(true);
   const [movies, setMovies] = useState([]);
 
   const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -36,44 +40,41 @@ const Favorites = ({ navigation }) => {
     return () => subscription?.remove();
   }, []);
   
-  const fetchData = async () => {
+  async function fetchMovies() {
+    setIsLoading(true);
     try {
+      const response = await axios.get(
+        `${getFilteredMovies}genre=${genre}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
 
-      const response = await axios.get(getAllFavorites + JSON.parse(localStorage.getItem('userId')), {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      },
-      withCredentials: true
-   })
-
-      console.log(response.data);
       setMovies(response.data);
+    } catch (err) {
+      console.log(err);
+      window.alert("Error", err?.response?.data || "Something went wrong");
+      setMovies([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
-      } catch (err) {
-        console.error("Error fetching movies:", err);
-      } finally {
-        setLoading(false);
-      }
-  };
-
+  const genreType = String(genre).charAt(0).toUpperCase() + String(genre).slice(1, );
 
   useEffect(() => {
-    fetchData();
-    setLoading(false);
-  }, []);
+    fetchMovies();
+  }, [genre]);
 
-  const handleMoviePress = (movie) => {
-    console.log(movie);
-    navigation.navigate('MovieWatcher', { id: movie.id });
-  };
-
-  return loading ? <Loader /> : (
+  return isLoading ? <Loader /> : (
     <View style={styles.container}>
       <View style={styles.flexRow}>
-        <Text style={styles.title}>Favorite Movies</Text>
+        <Text style={styles.title}>Filtered {genreType} Movies</Text>
       </View>
       
-      <View style={{height: '80vh'}}>
+      <View style={{height: '72vh'}}>
         <FlatList
           key={numColumns}
           data={movies}
@@ -81,7 +82,7 @@ const Favorites = ({ navigation }) => {
           numColumns={numColumns}
           columnWrapperStyle={styles.row}
           renderItem={({ item }) => (
-            <MovieCard props={item} onPress={() => handleMoviePress(item)}  style={{width: CARD_WIDTH}}/>
+            <MovieCard props={item} onPress={() => handleMoviePress(item)} style={{width: CARD_WIDTH}}/>
           )}
           onEndReachedThreshold={0.5}
           scrollEventThrottle={17}
@@ -91,7 +92,7 @@ const Favorites = ({ navigation }) => {
   );
 };
 
-export default Favorites;
+export default FilteredMovies;
 
 const styles = StyleSheet.create({
   container: {

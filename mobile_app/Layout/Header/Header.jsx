@@ -91,10 +91,9 @@ const Header = () => {
           {MENUITEMS.map(item => (
             item.Items.map((menuItem, idx) => {
               return(
-                <View style={styles.genreDropdownContainer}>
+                <View style={styles.genreDropdownContainer} key={idx}>
               {menuItem.type === 'sub' && menuItem.children &&
                 menuItem.children.map((genre, cIdx) => {
-                  console.log(genre);
                   return(
                     <Pressable
                       key={cIdx}
