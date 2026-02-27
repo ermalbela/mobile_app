@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'start',
     display: 'flex',
     flexDirection: 'row',
-    margin: '10px',
+    // margin: '10px',
     marginBottom: '20px'
   }
 });

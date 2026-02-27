@@ -46,14 +46,14 @@ const Register = ({ navigation }) => {
         Status: 'Active',
       });
 
-      Alert.alert('Success', 'Registered successfully', [
+      window.alert('Success, Registered successfully', [
         {
           text: 'OK',
-          onPress: () => navigation.navigate('Login'),
         },
       ]);
+      navigation.navigate('Login')
     } catch (err) {
-      Alert.alert('Error', 'Something went wrong');
+      window.alert('Error, Something went wrong');
     }
   };
 

@@ -3,7 +3,7 @@ import Favorites from '../components/Favorites';
 import MovieWatcher from '../components/MovieWatcher';
 // import AccountSettings from '../screens/AccountSettings';
 import FilteredMovies from '../components/FilteredMovies';
-// import AdminDashboard from '../screens/AdminDashboard';
+import AdminDashboard from '../components/AdminDashboard';
 
 export const routes = [
   { name: 'Dashboard', component: Dashboard },
@@ -11,5 +11,5 @@ export const routes = [
   { name: 'Favorites', component: Favorites },
 //   { name: 'AccountSettings', component: AccountSettings },
   { name: 'FilteredMovies', component: FilteredMovies },
-//   { name: 'AdminDashboard', component: AdminDashboard }
+  { name: 'AdminDashboard', component: AdminDashboard }
 ];

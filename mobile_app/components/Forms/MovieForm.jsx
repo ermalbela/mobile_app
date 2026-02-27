@@ -20,7 +20,7 @@ import { addMovie } from '../../Endpoint';
 import MySelect from '../CommonElements/MySelect';
 
 
-const MovieForm = ({ setCreateMovie, setMovies }) => {
+const MovieForm = ({ setCreateMovie, setMovies, fetchData }) => {
   const [movie, setMovie] = useState({
     title: '',
     plot: '',
@@ -59,13 +59,14 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
     </components.MultiValue>
   );
 
-  const customStyles = { // Customizing react-select styles 
+  const customStyles = {
     container: (provided) => ({
       ...provided,
       borderColor: 'rgb(164, 206, 212);',
       borderRadius: '4px',
       borderStyle: 'solid',
-      borderWidth: '1px'
+      borderWidth: '1px',
+      margin: '0 0 10px 0'
     }),
     control: (provided) => ({
       ...provided,
@@ -117,8 +118,8 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
     });
 
     if (!res.canceled) {
-      setMovie({ ...movie, imageFile: res.assets[0].file, imageName: res.assets[0].name});
-      setImageText(res.assets[0].name);
+      setMovie({ ...movie, imageFile: res.assets[0].file, imageName: res.assets[0].fileName});
+      setImageText(res.assets[0].fileName);
     }
   };
 
@@ -135,7 +136,7 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
 
   const submitMovie = async () => {
     if (!movie.title || !movie.plot || !movie.imageFile || !movie.videoFile) {
-      window.alert('Error', 'Please fill all required fields');
+      window.alert('Error, Please fill all required fields');
       return;
     }
 
@@ -178,10 +179,11 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
         },
       });
 
-      Alert.alert('Success', 'Movie added successfully');
+      window.alert('Success, Movie added successfully');
       setCreateMovie(false);
+      fetchData();
     } catch (err) {
-      Alert.alert('Error', 'Upload failed');
+      window.alert('Error, Upload failed');
       console.log(err.response);
     }
   };
@@ -205,6 +207,54 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
         onChangeText={(v) => setMovie({ ...movie, plot: v })}
       />
 
+      <MySelect
+        options={actors}
+        styles={customStyles}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        components={{ Option, MultiValue }}
+        onChange={(selected) => {
+          setMovie({...movie, actors: selected});
+        }}
+        value={movie.actors}
+        maxMenuHeight={"160px"}
+        placeholder="Actors"
+        isClearable
+      />
+
+      <MySelect
+        options={genres}
+        styles={customStyles}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        components={{ Option, MultiValue }}
+        onChange={(selected) => {
+          setMovie({...movie, genres: selected});
+        }}
+        value={movie.genres}
+        maxMenuHeight={"160px"}
+        placeholder="Genres"
+        isClearable
+      />
+
+      <MySelect
+        options={languages}
+        styles={customStyles}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        components={{ Option, MultiValue }}
+        onChange={(selected) => {
+          setMovie({...movie, languages: selected});
+        }}
+        value={movie.languages}
+        maxMenuHeight={"160px"}
+        placeholder="Languages"
+        isClearable
+      />
+
       <Pressable onPress={() => setShowDate(true)} style={styles.button}>
         <Text>{releaseDateText}</Text>
       </Pressable>
@@ -222,60 +272,6 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
         }}
       />
 
-      <MySelect
-        options={actors}
-        styles={customStyles}
-        isMulti
-        closeMenuOnSelect={false}
-        hideSelectedOptions={false}
-        components={{ Option, MultiValue }}
-        onChange={(selected) => {
-          setMovie({...movie, actors: selected});
-        }}
-        value={movie.actors}
-        className="react-select-container fullWidth"
-        classNamePrefix="react-select"
-        maxMenuHeight={"160px"}
-        placeholder="Actors"
-        isClearable
-      />
-
-      <MySelect
-        options={genres}
-        styles={customStyles}
-        isMulti
-        closeMenuOnSelect={false}
-        hideSelectedOptions={false}
-        components={{ Option, MultiValue }}
-        onChange={(selected) => {
-          setMovie({...movie, genres: selected});
-        }}
-        value={movie.genres}
-        className="react-select-container fullWidth"
-        classNamePrefix="react-select"
-        maxMenuHeight={"160px"}
-        placeholder="Genres"
-        isClearable
-      />
-
-      <MySelect
-        options={languages}
-        styles={customStyles}
-        isMulti
-        closeMenuOnSelect={false}
-        hideSelectedOptions={false}
-        components={{ Option, MultiValue }}
-        onChange={(selected) => {
-          setMovie({...movie, languages: selected});
-        }}
-        value={movie.languages}
-        className="react-select-container"
-        classNamePrefix="react-select"
-        maxMenuHeight={"160px"}
-        placeholder="Languages"
-        isClearable
-      />
-
       <Pressable onPress={pickImage} style={styles.button}>
         <Text>{imageText}</Text>
       </Pressable>
@@ -285,11 +281,11 @@ const MovieForm = ({ setCreateMovie, setMovies }) => {
       </Pressable>
 
       <View style={styles.actions}>
-        <Pressable onPress={() => setCreateMovie(false)}>
-          <Text>Cancel</Text>
+        <Pressable style={[styles.action_button, {backgroundColor: 'grey'}]} onPress={() => setCreateMovie(false)}>
+          <Text style={{color: '#fff'}}>Cancel</Text>
         </Pressable>
-        <Pressable onPress={submitMovie}>
-          <Text>Create</Text>
+        <Pressable style={[styles.action_button, {backgroundColor: '#24695c'}]} onPress={submitMovie}>
+          <Text style={{color: '#fff'}}>Create</Text>
         </Pressable>
       </View>
     </View>
@@ -322,6 +318,11 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 10,
   },
+  action_button: {
+    padding: '10px',
+    borderRadius: '8px',
+    color: '#fff'
+  }
 });

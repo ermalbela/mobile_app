@@ -31,7 +31,7 @@ const Footer = () => {
           item.Items.map((menuItem, idx) => {
 
             if (
-              menuItem.title === 'Admin Dashboard' &&
+              menuItem.title === 'Admin' &&
               role !== 'Superadmin' &&
               role !== 'Admin'
             ) {

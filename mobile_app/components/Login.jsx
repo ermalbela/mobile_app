@@ -68,13 +68,12 @@ const Login = ({ navigation }) => {
       // await AsyncStorage.setItem('status', res.data.updateResult.status);
       
       console.log(res)
-      Alert.alert('Success', 'Logged in successfully');
       // console.log(res.data.tokenString)
       await fetchUserRole();
 
     } catch (err) {
       console.log(err)
-      Alert.alert('Login failed', 'invalid credentials');
+      window.alert('Login failed, invalid credentials');
     }
   };
 

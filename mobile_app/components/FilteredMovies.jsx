@@ -55,7 +55,7 @@ const FilteredMovies = () => {
       setMovies(response.data);
     } catch (err) {
       console.log(err);
-      window.alert("Error", err?.response?.data || "Something went wrong");
+      window.alert("Error. Something went wrong");
       setMovies([]);
     } finally {
       setIsLoading(false);

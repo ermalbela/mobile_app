@@ -52,7 +52,7 @@ namespace backend_mobile.Controllers
                     Name = user.Name,
                     Email = user.Email,
                     UserName = user.UserName,
-                    Role = "Superadmin",
+                    Role = "Admin",
                     Status = user.Status
                 };
 

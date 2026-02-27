@@ -4,9 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import AuthContext from '../../_helper/AuthContext';
 import ListOfMenu from '../ListOfMenu';
 import axios from 'axios';
-import { getMovies } from '../../Endpoint';
+import { getMovies, logout } from '../../Endpoint';
 import { Ionicons } from '@expo/vector-icons';
 import { MENUITEMS } from '../../Menu';
+import { Button } from 'react-native-paper';
 
 const Header = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -15,6 +16,7 @@ const Header = () => {
   const [movies, setMovies] = useState([]);
   const navigation = useNavigation();
   const [showGenres, setShowGenres] = useState(false);
+  const {setRole} = useContext(AuthContext);
 
   useEffect(() => {
     fetchMovies();
@@ -44,6 +46,22 @@ const Header = () => {
     } else {
       setIsFocused(false);
       setSearchResult([]);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(logout, { withCredentials: true });
+      localStorage.removeItem("name");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("token");
+      localStorage.removeItem("status");
+      setRole("");
+
+      document.cookie = "token=; Max-Age=0; path=/;";
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error logging out:", error);
     }
   };
 
@@ -92,29 +110,30 @@ const Header = () => {
             item.Items.map((menuItem, idx) => {
               return(
                 <View style={styles.genreDropdownContainer} key={idx}>
-              {menuItem.type === 'sub' && menuItem.children &&
-                menuItem.children.map((genre, cIdx) => {
-                  return(
-                    <Pressable
-                      key={cIdx}
-                      style={styles.genreItem}
-                      onPress={() => {
-                        setShowGenres(false);
-                        navigation.navigate("FilteredMovies", { genre: genre.path });
-                      }}
-                    >
-                      {genre.icon({ size: 20, color: "#333", style: { marginRight: 8 } })}
-                      <Text style={styles.genreText}>{genre.title}</Text>
-                    </Pressable>
-                  )
-                })
-              }
-              </View>
+                  {menuItem.type === 'sub' && menuItem.children &&
+                    menuItem.children.map((genre, cIdx) => {
+                      return(
+                        <Pressable
+                          key={cIdx}
+                          style={styles.genreItem}
+                          onPress={() => {
+                            setShowGenres(false);
+                            navigation.navigate("FilteredMovies", { genre: genre.path });
+                          }}
+                        >
+                          {genre.icon({ size: 20, color: "#333", style: { marginRight: 8 } })}
+                          <Text style={styles.genreText}>{genre.title}</Text>
+                        </Pressable>
+                      )
+                    })
+                  }
+                </View>
               )
             })
           ))}
         </View>
       )}
+      <Pressable onPress={handleLogout} style={{backgroundColor: '#24695c', padding: 9, borderRadius: 4, marginLeft: 8}}><Text style={{color: "#fff"}}>Log Out</Text></Pressable>
     </View>
   );
 };
@@ -134,8 +153,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   leftHeader: { flexDirection: 'row', alignItems: 'center' },
-  brand: { fontSize: 18, fontWeight: 'bold', marginRight: 10 },
-  searchContainer: { flex: 1, marginHorizontal: 10 },
+  brand: { fontSize: 18, fontWeight: 'bold', marginRight: 8 },
+  searchContainer: { flex: 1, marginHorizontal: 8 },
   searchInput: {
     height: 40,
     borderWidth: 1,
@@ -166,6 +185,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
+    minWidth: "200px"
   },
   genreButton: {
     padding: 6,

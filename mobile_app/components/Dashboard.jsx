@@ -126,7 +126,7 @@ const Dashboard = ({ navigation }) => {
 
       {/* Modal for creating movie */}
       <Modal visible={createMovie} animationType="slide">
-        <MovieForm setCreateMovie={setCreateMovie} setMovies={setMovies} />
+        <MovieForm setCreateMovie={setCreateMovie} setMovies={setMovies} fetchData={fetchData}/>
       </Modal>
     </View>
   );

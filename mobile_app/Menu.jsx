@@ -33,7 +33,7 @@ export const MENUITEMS = [
         title: "Admin",
         icon: (props) => <Ionicons name="person-outline" {...props} />,
         type: "link",
-        path: `Admin_dashboard`,
+        path: `AdminDashboard`,
         roles: ["Admin", "Superadmin"], // only show if the user is admin or superadmin
       },
       {
